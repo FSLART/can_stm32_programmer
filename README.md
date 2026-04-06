@@ -2,6 +2,10 @@
 
 A Python-based GUI tool to program STM32 microcontrollers over CAN bus, using the STM32 bootloader and the CAN protocol described in **AN3154**.
 
+<p align="center">
+  <img src="support/program.png" alt="STM32 CAN Programmer GUI" width="700"/>
+</p>
+
 ---
 
 ## How It Works
