@@ -148,6 +148,3 @@ Step-by-step CAN peripheral setup guides:
 
 ---
 
-## License
-
-MIT
