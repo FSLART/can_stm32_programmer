@@ -1,0 +1,4 @@
+pyqt5>=5.15
+python-can>=4.0
+pyserial>=3.5
+cantools>=39.0
