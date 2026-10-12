@@ -9,7 +9,7 @@
 
 ## Summary
 
-AN3154 defines the CAN frame protocol used by the STM32 factory system memory bootloader. Unlike UART or USB DFU, the CAN bootloader communicates entirely via standard 11-bit CAN frames (no extended IDs).
+AN3154 defines the CAN frame protocol used by the STM32 factory system memory bootloader. The GUI implements it in mode **ST ROM — AN3154**; the LART bootloader in [`../firmware/`](../firmware/) uses its own protocol instead ([`CAN_PROTOCOL.md`](../firmware/docs/CAN_PROTOCOL.md)). Unlike UART or USB DFU, the CAN bootloader communicates entirely via standard 11-bit CAN frames (no extended IDs).
 
 ### Key Protocol Points
 

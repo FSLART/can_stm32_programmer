@@ -73,7 +73,9 @@ AN2606 §3 describes the requirements for a successful software jump to the boot
 6. The vector table base register (`SCB->VTOR`) must point to `0x00000000`.
 7. The main stack pointer must be loaded from the bootloader's vector table.
 
-The `JumpToBootloader()` function in the example project implements all of these steps.
+The `JumpToBootloader()` function in [the STM32F412 wiki](../wiki/CAN_Setup_STM32F412.md#rom-bootloader-jump-implementation) implements all of these steps.
+
+> This applies to the **ST ROM** bootloader (GUI mode *ST ROM — AN3154*). The **LART** bootloader in [`../firmware/`](../firmware/) lives in user flash at `0x08000000`, so the MCU boots it normally (BOOT0 = 0); the application enters it with a RAM flag and a reset instead of a jump.
 
 ---
 

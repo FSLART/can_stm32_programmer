@@ -4,7 +4,7 @@
 >
 > According to **AN2606 §21 (Table 45)**, the STM32F10xxx system memory bootloader only supports **USART1** (PA9/PA10). CAN is **not** available in the factory ROM bootloader of any STM32F103 device.
 >
-> If you need CAN-based firmware update on an STM32F103, you must implement a **custom bootloader** in user flash (e.g. at `0x08000000`) that receives firmware over CAN and then self-programs the application area. This is a significantly different approach from the system memory flow used for the STM32F412.
+> If you need CAN-based firmware update on an STM32F103, you must implement a **custom bootloader** in user flash (e.g. at `0x08000000`) that receives firmware over CAN and then self-programs the application area. This is the approach of the LART bootloader for the STM32F412 in [`../firmware/`](../firmware/); its [porting guide](../firmware/docs/PORTING.md) lists what to change (sector/page table, bxCAN CAN1 instead of CAN2, flash programming unit, smaller slots).
 >
 > This guide covers **CAN peripheral setup for application firmware** on the STM32F103CBT6. The bootloader jump section describes jumping to the USART bootloader (the only factory option), or to a custom CAN bootloader you implement yourself.
 

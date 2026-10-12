@@ -1,0 +1,7 @@
+/Debug/
+/Release/
+/build*/
+/.venv/
+__pycache__/
+*.pyc
+/*-build.log

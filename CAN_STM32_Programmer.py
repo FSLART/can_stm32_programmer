@@ -2,8 +2,11 @@ import sys
 import os
 import time
 import can
-import cantools
 from serial.tools import list_ports
+
+# Bootloader LART: same packaging/protocol code as the CLI uploader.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "firmware", "tools"))
+import can_upload
  
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                              QHBoxLayout, QPushButton, QLabel, QComboBox, 
@@ -29,7 +32,8 @@ CMD_WRITE = 0x31
 CMD_ERASE = 0x43
  
 APP_BITRATE = 250000
-BOOT_BITRATE = 125000
+BOOT_BITRATE = 125000        # ST ROM bootloader (AN3154)
+LART_BITRATE = 250000        # Bootloader LART (firmware/), fixed
 BOOTLOADER_DATA_ID = 0x04   # AN3154 recommends 0x04 for write data frames
  
 WRITE_CHUNK_SIZE = 256       # AN3154 allows up to 256 bytes
@@ -69,11 +73,12 @@ class FlasherThread(QThread):
     log_signal = pyqtSignal(str)
     progress_signal = pyqtSignal(int)
     
-    def __init__(self, port, filepath, jump_id, jump_data, app_bitrate=1000000):
+    def __init__(self, port, filepath, jump_id, jump_data, app_bitrate=1000000, mode="lart"):
         super().__init__()
         self.port = port
         self.filepath = filepath
         self.app_bitrate = app_bitrate
+        self.mode = mode  # "lart" (firmware/ bootloader) or "rom" (ST system memory, AN3154)
         
         # Converter string hexadecimal do ID (ex: "123") para inteiro
         try:
@@ -286,6 +291,14 @@ class FlasherThread(QThread):
     def run(self):
         bus = None
         try:
+            lart = self.mode == "lart"
+            if lart:
+                # Validar/empacotar antes de tocar no CAN: binários no endereço errado são rejeitados aqui.
+                with open(self.filepath, "rb") as f:
+                    image = can_upload.prepare_image(f.read())
+                self.log_signal.emit(f"Imagem MCUboot pronta: {len(image)} bytes "
+                                     f"(máx. {can_upload.MAX_IMAGE}, app em 0x{can_upload.APP_ADDRESS:08X}).")
+
             # 1) app bus
             self.log_signal.emit(f"A abrir SLCAN em {self.port} a {self.app_bitrate} bps...")
             bus = retry_open_slcan(self.port, self.app_bitrate, retries=5, delay=0.3)
@@ -302,11 +315,21 @@ class FlasherThread(QThread):
             bus = None
             time.sleep(0.3)
  
-            # 2) bootloader bus at 125 kbps
-            self.log_signal.emit(f"A reabrir SLCAN em {self.port} a {BOOT_BITRATE} bps...")
-            bus = retry_open_slcan(self.port, BOOT_BITRATE, retries=12, delay=0.5)
+            # 2) bootloader bus: 250 kbps (LART) or 125 kbps (ROM)
+            boot_bitrate = LART_BITRATE if lart else BOOT_BITRATE
+            self.log_signal.emit(f"A reabrir SLCAN em {self.port} a {boot_bitrate} bps...")
+            bus = retry_open_slcan(self.port, boot_bitrate, retries=12, delay=0.5)
             time.sleep(0.5)
- 
+
+            if lart:
+                # INFO -> BEGIN -> DATA -> END -> RESET (firmware/docs/CAN_PROTOCOL.md)
+                self.log_signal.emit("A aguardar resposta INFO do bootloader LART (até 30 s)...")
+                can_upload.wait_for_bootloader(bus)
+                can_upload.upload(bus, image,
+                                  progress=lambda done, total: self.progress_signal.emit(100 * done // total),
+                                  log=self.log_signal.emit)
+                return
+
             # 3) sync
             if not self._sync_bootloader(bus):
                 return
@@ -412,7 +435,7 @@ class STM32CanFlasher(QMainWindow):
  
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("STM32 CAN Flasher - Protocolo AN3154")
+        self.setWindowTitle("STM32 CAN Flasher - Bootloader LART / AN3154")
         # Window icon from embedded image
         from PyQt5.QtGui import QIcon
         from PyQt5.QtCore import QByteArray
@@ -448,23 +471,32 @@ class STM32CanFlasher(QMainWindow):
         group_adapter.setLayout(adapter_layout)
         layout.addWidget(group_adapter)
  
+        # Bootloader alvo
+        group_mode = QGroupBox("Bootloader")
+        mode_layout = QHBoxLayout()
+        self.mode_combo = QComboBox()
+        self.mode_combo.addItem("LART (firmware/, STM32F412, CAN 0x600/0x580 a 250 kbit/s, app em 0x08010200)", "lart")
+        self.mode_combo.addItem("ST ROM - AN3154 (system memory, 125 kbit/s, app em 0x08000000)", "rom")
+        mode_layout.addWidget(self.mode_combo, stretch=1)
+        group_mode.setLayout(mode_layout)
+        layout.addWidget(group_mode)
+ 
         # Configurações do Comando de Salto
         group_jump = QGroupBox("Comando para Saltar para o Bootloader (Opcional)")
         jump_layout = QHBoxLayout()
         self.jump_id_input = QLineEdit()
         self.jump_id_input.setPlaceholderText("Ex: 121 ou 0x79")
-        self.jump_id_input.setText("0x0dc")   # default from your DBC
  
         self.jump_data_input = QLineEdit()
         self.jump_data_input.setPlaceholderText("Ex: 01 05 AA BB")
-        self.jump_data_input.setText("01")  # programming_request = 1
  
         self.app_bitrate_combo = QComboBox()
         self.app_bitrate_combo.addItem("1 Mbit/s",  1000000)
         self.app_bitrate_combo.addItem("500 kbit/s", 500000)
         self.app_bitrate_combo.addItem("250 kbit/s", 250000)
         self.app_bitrate_combo.addItem("125 kbit/s", 125000)
-        self.app_bitrate_combo.setCurrentIndex(0)  # 1 Mbit/s default
+        self.mode_combo.currentIndexChanged.connect(self.apply_mode_defaults)
+        self.apply_mode_defaults()
  
         jump_layout.addWidget(QLabel("CAN ID (Hex):"))
         jump_layout.addWidget(self.jump_id_input)
@@ -505,6 +537,18 @@ class STM32CanFlasher(QMainWindow):
  
         self.refresh_ports()
  
+    # Comando de salto e bitrate da aplicação por omissão de cada bootloader
+    MODE_DEFAULTS = {
+        "lart": ("0x601", "01 00 00 00 00 00 00 00", 250000),  # ENTER_BOOT, BCI_BOOT=1
+        "rom": ("0x0dc", "01", 1000000),                       # exemplo jump-to-ROM
+    }
+
+    def apply_mode_defaults(self):
+        jump_id, jump_data, bitrate = self.MODE_DEFAULTS[self.mode_combo.currentData()]
+        self.jump_id_input.setText(jump_id)
+        self.jump_data_input.setText(jump_data)
+        self.app_bitrate_combo.setCurrentIndex(self.app_bitrate_combo.findData(bitrate))
+
     def select_file(self):
         options = QFileDialog.Options()
         file_name, _ = QFileDialog.getOpenFileName(self, "Selecionar Firmware", "", 
@@ -540,7 +584,8 @@ class STM32CanFlasher(QMainWindow):
             filepath=self.filepath,
             jump_id=self.jump_id_input.text(),
             jump_data=self.jump_data_input.text(),
-            app_bitrate=self.app_bitrate_combo.currentData()
+            app_bitrate=self.app_bitrate_combo.currentData(),
+            mode=self.mode_combo.currentData()
         )
         
         # Conectar sinais

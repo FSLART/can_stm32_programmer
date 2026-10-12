@@ -1,0 +1,184 @@
+VERSION ""
+
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: Uploader Bootloader Application
+
+
+BO_ 1536 BootloaderRequest: 8 Uploader
+ SG_ Command M : 0|8@1+ (1,0) [0|255] ""  Bootloader
+ SG_ InfoReserved m0 : 8|56@1+ (1,0) [0|0] ""  Bootloader
+ SG_ ResetReserved m4 : 8|56@1+ (1,0) [0|0] ""  Bootloader
+ SG_ ImageLength m1 : 8|32@1+ (1,0) [0|4294967295] "bytes"  Bootloader
+ SG_ ImageOffset m2 : 8|24@1+ (1,0) [0|16777215] "bytes"  Bootloader
+ SG_ PayloadByte0 m2 : 32|8@1+ (1,0) [0|255] ""  Bootloader
+ SG_ PayloadByte1 m2 : 40|8@1+ (1,0) [0|255] ""  Bootloader
+ SG_ PayloadByte2 m2 : 48|8@1+ (1,0) [0|255] ""  Bootloader
+ SG_ PayloadByte3 m2 : 56|8@1+ (1,0) [0|255] ""  Bootloader
+ SG_ ImageCRC32 m3 : 8|32@1+ (1,0) [0|4294967295] ""  Bootloader
+
+BO_ 1408 BootloaderResponse: 8 Bootloader
+ SG_ ReplyCommand : 0|8@1+ (1,0) [0|255] ""  Uploader
+ SG_ Status : 8|8@1+ (1,0) [0|255] ""  Uploader
+ SG_ ValueBytes : 16|32@1+ (1,0) [0|4294967295] "bytes"  Uploader
+ SG_ ProtocolVersion : 48|8@1+ (1,0) [0|255] ""  Uploader
+ SG_ UpdateState : 56|8@1+ (1,0) [0|255] ""  Uploader
+
+BO_ 1537 ENTER_BOOT: 8 Uploader
+ SG_ BCI_BOOT : 0|1@1+ (1,0) [0|1] ""  Application
+
+BO_ 1409 BCI_BOOT_HEARTBEAT: 8 Bootloader
+ SG_ boot : 0|8@1+ (1,0) [85|85] "" Vector__XXX
+ SG_ Timestamp : 8|32@1+ (1,0) [0|4294967295] "ms" Vector__XXX
+ SG_ BootVersionMajor : 40|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ BootVersionMinor : 48|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ BootVersionPatch : 56|8@1+ (1,0) [0|255] "" Vector__XXX
+
+
+
+BO_ 1410 BCI_BOOT_INFO: 8 Bootloader
+ SG_ ProtocolVersion : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ BoardType : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ ValidBanks : 16|8@1+ (1,0) [0|3] "" Vector__XXX
+ SG_ UploadStage : 24|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ MaxUploadBytes : 32|32@1+ (1,0) [0|4294967295] "bytes" Vector__XXX
+
+BO_ 1411 BCI_BOOT_FIRMWARE_VERSION: 8 Bootloader
+ SG_ Major : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Minor : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Revision : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ Build : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+BO_ 1412 BCI_BOOT_DECISION: 8 Bootloader
+ SG_ SelectedBank : 0|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ EntryFlags : 8|8@1+ (1,0) [0|15] "" Vector__XXX
+ SG_ RejectedBank : 16|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ RejectReason : 24|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ ResetFlags : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+BO_ 1413 BCI_BOOT_UPLOAD_STATUS: 8 Bootloader
+ SG_ TargetBank : 0|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ Stage : 8|8@1+ (1,0) [0|5] "" Vector__XXX
+ SG_ ReceivedBytes : 16|24@1+ (1,0) [0|16777215] "bytes" Vector__XXX
+ SG_ TotalBytes : 40|24@1+ (1,0) [0|16777215] "bytes" Vector__XXX
+
+BO_ 1414 BCI_BOOT_ERROR: 8 Bootloader
+ SG_ ErrorCode : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Bank : 8|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ Command : 16|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Source : 24|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Detail : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+BO_ 1415 BCI_BOOT_ROLLBACK: 8 Bootloader
+ SG_ RejectedBank : 0|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ SelectedBank : 8|8@1+ (1,0) [0|2] "" Vector__XXX
+ SG_ Reason : 16|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ RejectedVersionKnown : 24|8@1+ (1,0) [0|1] "" Vector__XXX
+ SG_ RejectedGeneration : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+BO_ 1416 BCI_BOOT_FLASH_ERROR: 8 Bootloader
+ SG_ FlashOffset : 0|32@1+ (1,0) [0|4294967295] "bytes" Vector__XXX
+ SG_ HalError : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+BO_ 1417 BCI_BOOT_REJECTED_VERSION: 8 Bootloader
+ SG_ Major : 0|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Minor : 8|8@1+ (1,0) [0|255] "" Vector__XXX
+ SG_ Revision : 16|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ Build : 32|32@1+ (1,0) [0|4294967295] "" Vector__XXX
+
+CM_ "Classic CAN, 250 kbit/s, standard 11-bit identifiers, DLC 8. All multibyte integers are unsigned little-endian. Stop-and-wait upload: acknowledge every DATA frame.";
+CM_ BU_ Uploader "PC programming script tools/can_upload.py.";
+CM_ BU_ Bootloader "LART STM32F412 bootloader. Request ID 0x600; response ID 0x580.";
+CM_ BO_ 1536 "Uploader to bootloader. Byte 0 selects the command. Set unused bytes to zero; pad the final DATA frame payload with 0xFF.";
+CM_ SG_ 1536 Command "INFO=0, BEGIN=1, DATA=2, END=3, RESET=4. INFO and RESET have no payload; bytes 1 through 7 must be zero.";
+CM_ SG_ 1536 ImageLength "BEGIN: total packaged MCUboot image length including 512-byte header and TLVs. Current allowed range is 560 through 196608 bytes. Bytes 5 through 7 must be zero.";
+CM_ SG_ 1536 ImageOffset "DATA: byte offset from the beginning of the packaged image, starting at zero and increasing by four. Only an exact retry of the most recent DATA frame is accepted without programming again.";
+CM_ SG_ 1536 PayloadByte0 "DATA: first payload byte, at ImageOffset.";
+CM_ SG_ 1536 PayloadByte1 "DATA: second payload byte; use 0xFF if beyond ImageLength.";
+CM_ SG_ 1536 PayloadByte2 "DATA: third payload byte; use 0xFF if beyond ImageLength.";
+CM_ SG_ 1536 PayloadByte3 "DATA: fourth payload byte; use 0xFF if beyond ImageLength.";
+CM_ SG_ 1536 ImageCRC32 "END: Python zlib.crc32 over the complete packaged image. Reflected polynomial 0xEDB88320, initial and final XOR 0xFFFFFFFF. Bytes 5 through 7 must be zero.";
+CM_ BO_ 1408 "Bootloader to uploader. Byte 0 is request command OR 0x80. An error reply uses the same layout.";
+CM_ SG_ 1408 ReplyCommand "The acknowledged request command OR 0x80. Unknown command errors may carry other values.";
+CM_ SG_ 1408 Status "0=OK, 1=bad DLC/unknown command, 2=bad state, 3=bad image size, 4=unexpected DATA offset, 5=flash/commit failure, 6=CRC/image/SHA validation failure.";
+CM_ SG_ 1408 ValueBytes "INFO reply (0x80): maximum packaged upload size, currently 196608. Every other reply: accepted byte count for the current upload, including error replies.";
+CM_ SG_ 1408 ProtocolVersion "Current wire protocol version is 1.";
+CM_ SG_ 1408 UpdateState "0=idle, 1=receiving, 2=validated and committed; installed into the application slot at next boot. State 2 does not confirm that the application has run.";
+CM_ BO_ 1537 "Uploader to running application. Standard CAN ID 0x601, DLC 8. Send BCI_BOOT=1 once before polling bootloader INFO. Set all other bits to zero; no entry acknowledgement is defined.";
+CM_ SG_ 1537 BCI_BOOT "1 requests bootloader entry. Application must set RAM flag 0xB00710AD at 0x2003FFFC and reset; 0 means no request.";
+CM_ BO_ 1409 "Bootloader-mode indication on standard ID 0x581, DLC 8. Normally every 500 ms; blocking flash operations can delay it. Bytes 5-7 contain mandatory bootloader version major/minor/patch. Sent at startup, every 500 ms normally, and after INFO replies.";
+CM_ SG_ 1409 boot "Always 0x55 (decimal 85) while in bootloader mode.";
+CM_ SG_ 1409 Timestamp "HAL_GetTick() milliseconds sampled when queuing the heartbeat. Unsigned 32-bit little-endian in bytes 1-4; resets on MCU startup and wraps modulo 2^32.";
+VAL_ 1536 Command 0 "INFO" 1 "BEGIN" 2 "DATA" 3 "END" 4 "RESET" ;
+VAL_ 1408 ReplyCommand 128 "INFO_ACK" 129 "BEGIN_ACK" 130 "DATA_ACK" 131 "END_ACK" 132 "RESET_ACK" ;
+VAL_ 1408 Status 0 "OK" 1 "BAD_FRAME" 2 "BAD_STATE" 3 "BAD_SIZE" 4 "BAD_OFFSET" 5 "FLASH_ERROR" 6 "BAD_IMAGE" ;
+VAL_ 1408 UpdateState 0 "IDLE" 1 "RECEIVING" 2 "COMMITTED" ;
+VAL_ 1537 BCI_BOOT 0 "NO_REQUEST" 1 "ENTER_BOOTLOADER" ;
+VAL_ 1409 boot 85 "BOOT" 170 "APP" ;
+
+CM_ BO_ 1410 "Bootloader capabilities snapshot at startup and after INFO. BoardType 2 identifies the LART STM32F412RE port; ValidBanks bit 0 = valid application (primary) slot, bit 1 = valid committed image in the staging (upload) slot. Firmware remains unsigned in this build.";
+
+CM_ BO_ 1411 "Selected application MCUboot version: major/minor/revision/build. Only sent with a selected valid image. Associate with SelectedBank in BCI_BOOT_DECISION; it is not proof the app has run.";
+
+CM_ BO_ 1412 "Startup selection snapshot. Bank 0 means none, 1 the application (primary) slot, 2 the staging (upload) slot. EntryFlags bits: 0=RAM request, 1=button held, 2=no valid image/recovery, 3=rollback. ResetFlags is RCC_CSR captured before reset flags are cleared.";
+
+CM_ BO_ 1413 "Upload stage changes and progress every 16 KiB or final byte; INFO requests current counts. Counts include header and TLVs. COMMITTED means validated/record committed, not application health confirmation.";
+
+CM_ BO_ 1414 "Latest error retained until MCU reset. Command 255 means startup/no command. Source identifies validation/upload/flash/CAN/boot. Detail is interpreted using ErrorCode; read the protocol guide. Changes coalesce under TX backpressure.";
+
+CM_ BO_ 1415 "The committed, not yet installed staged image failed validation, so the current application slot image was kept. Reason is the validation error. RejectedGeneration is 0 on the F412 (no upload generations). RejectedVersionKnown permits the companion unverified header version on 0x589.";
+
+CM_ BO_ 1416 "Details accompanying a flash-source error: device-relative offset (add flash base for physical address) and raw HAL_FLASH_GetError bits. No private/signing key material is transmitted.";
+
+CM_ BO_ 1417 "Unverified MCUboot header version from the rejected image, only when RejectedVersionKnown=1. Never interpret it as an authenticated or successfully running version.";
+VAL_ 1410 BoardType 0 "UNKNOWN" 1 "STM32L476RG_PORT" 2 "STM32F412RE_LART" ;
+VAL_ 1410 ValidBanks 0 "NONE" 1 "PRIMARY" 2 "STAGING" 3 "BOTH" ;
+VAL_ 1410 UploadStage 0 "IDLE" 1 "ERASING" 2 "RECEIVING" 3 "VALIDATING" 4 "COMMITTED" 5 "FAILED" ;
+VAL_ 1413 Stage 0 "IDLE" 1 "ERASING" 2 "RECEIVING" 3 "VALIDATING" 4 "COMMITTED" 5 "FAILED" ;
+VAL_ 1412 SelectedBank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1412 RejectedBank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1413 TargetBank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1414 Bank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1415 SelectedBank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1415 RejectedBank 0 "NONE" 1 "PRIMARY" 2 "STAGING" ;
+VAL_ 1412 RejectReason 0 "NONE" 1 "HEADER" 2 "TLV" 3 "HASH" 4 "VECTORS" 5 "CRC" 6 "BAD_FRAME" 7 "BAD_STATE" 8 "BAD_SIZE" 9 "BAD_OFFSET" 10 "FLASH_READ" 11 "FLASH_WRITE" 12 "FLASH_ERASE" 13 "FLASH_UNLOCK" 14 "FLASH_LOCK" 15 "CAN_QUEUE" 16 "CAN_TIMEOUT" 17 "HANDOFF" 18 "FLASH_CONFIG" 19 "INACTIVITY" 20 "RECORD" 21 "FLASH_OPERATION" ;
+VAL_ 1414 ErrorCode 0 "NONE" 1 "HEADER" 2 "TLV" 3 "HASH" 4 "VECTORS" 5 "CRC" 6 "BAD_FRAME" 7 "BAD_STATE" 8 "BAD_SIZE" 9 "BAD_OFFSET" 10 "FLASH_READ" 11 "FLASH_WRITE" 12 "FLASH_ERASE" 13 "FLASH_UNLOCK" 14 "FLASH_LOCK" 15 "CAN_QUEUE" 16 "CAN_TIMEOUT" 17 "HANDOFF" 18 "FLASH_CONFIG" 19 "INACTIVITY" 20 "RECORD" 21 "FLASH_OPERATION" ;
+VAL_ 1415 Reason 0 "NONE" 1 "HEADER" 2 "TLV" 3 "HASH" 4 "VECTORS" 5 "CRC" 6 "BAD_FRAME" 7 "BAD_STATE" 8 "BAD_SIZE" 9 "BAD_OFFSET" 10 "FLASH_READ" 11 "FLASH_WRITE" 12 "FLASH_ERASE" 13 "FLASH_UNLOCK" 14 "FLASH_LOCK" 15 "CAN_QUEUE" 16 "CAN_TIMEOUT" 17 "HANDOFF" 18 "FLASH_CONFIG" 19 "INACTIVITY" 20 "RECORD" 21 "FLASH_OPERATION" ;
+VAL_ 1414 Source 0 "NONE" 1 "VALIDATION" 2 "UPLOAD" 3 "FLASH" 4 "CAN" 5 "BOOT" ;
+VAL_ 1414 Command 0 "INFO" 1 "BEGIN" 2 "DATA" 3 "END" 4 "RESET" 255 "STARTUP" ;
+VAL_ 1412 EntryFlags 0 "AUTOMATIC" 1 "RAM" 2 "BUTTON" 3 "RAM_BUTTON" 4 "RECOVERY" 5 "RAM_RECOVERY" 6 "BUTTON_RECOVERY" 7 "RAM_BUTTON_RECOVERY" 8 "ROLLBACK" 9 "RAM_ROLLBACK" 10 "BUTTON_ROLLBACK" 11 "RAM_BUTTON_ROLLBACK" 12 "RECOVERY_ROLLBACK" 13 "RAM_RECOVERY_ROLLBACK" 14 "BUTTON_RECOVERY_ROLLBACK" 15 "RAM_BUTTON_RECOVERY_ROLLBACK" ;
+VAL_ 1415 RejectedVersionKnown 0 "UNKNOWN" 1 "HEADER_READ_UNVERIFIED" ;
+CM_ SG_ 1409 BootVersionMajor "Mandatory bootloader version, defined in boot_update.h; independent of application version.";
+CM_ SG_ 1412 ResetFlags "Raw STM32F412 RCC_CSR; reset flags can be combined. Decode using the target reference manual.";
+CM_ SG_ 1414 Detail "HEADER/HASH/READ/WRITE/ERASE/UNLOCK/LOCK/RECORD: flash offset; TLV: TLV offset; VECTORS: PC; CRC: device CRC; BAD_FRAME: DLC; BAD_STATE/INACTIVITY/FLASH_OPERATION: byte count; BAD_SIZE: requested length; BAD_OFFSET: requested offset; CAN_QUEUE/TIMEOUT: HAL CAN error; HANDOFF: rejected PC/offset; FLASH_CONFIG: FLASH_OPTCR.";

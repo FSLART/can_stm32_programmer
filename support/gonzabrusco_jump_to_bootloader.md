@@ -108,6 +108,6 @@ This approach works well and requires no changes to the linker script. The trade
 
 ## Recommendation for This Project
 
-The example firmware in this repository uses `Go` to `0x08000000` and relies on the Python tool sending the `Go` command at the end of programming. If the MCU hangs after programming, implement **Solution A** (fake vector table at `0x08000200`) and configure the Python tool's `go_addr` variable to `0x08000200`.
+This applies only to the GUI's **ST ROM — AN3154** mode, which sends `Go` to `0x08000000` at the end of programming. If the MCU hangs after programming, implement **Solution A** (fake vector table at `0x08000200`) and change the Python tool's `go_addr` variable to `0x08000200`. Alternatively, add **Solution B** to your application firmware as a clean way to always ensure correct state at startup.
 
-Alternatively, add **Solution B** to your application firmware as a clean way to always ensure correct state at startup.
+The **LART** bootloader ([`../firmware/`](../firmware/)) avoids the problem: it ends programming with a CAN `RESET` command, so the application always starts from a clean reset through the bootloader's own handoff (VTOR `0x08010200`, clocks and NVIC reset).
